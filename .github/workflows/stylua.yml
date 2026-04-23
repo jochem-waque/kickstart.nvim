@@ -1,6 +1,12 @@
 # Check Lua Formatting
 name: Check Lua Formatting
-on: pull_request_target
+on: pull_request
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
 
 jobs:
   stylua-check:
@@ -9,13 +15,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5 # v2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
       - name: Stylua Check
-        uses: JohnnyMorganz/stylua-action@v3
+        uses: JohnnyMorganz/stylua-action@762d02aa393cd7c7f196feb932d16db1e5c5aa77 # v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
           args: --check .
-
